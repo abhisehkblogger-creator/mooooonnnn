@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Drag the Papers ❤️</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Short+Stack&display=swap"
+        rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #fce4ec;
+      min-height: 100vh;
+      font-family: "Short Stack", cursive;
+      overflow: hidden;
+      touch-action: none;
+    }
+
+    .paper {
+      position: fixed;
+      left: 20px;
+      top: 20px;
+      width: min(280px, calc(100vw - 30px));
+      padding: 15px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px #0003;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      z-index: 1;
+    }
+
+    .paper:active {
+      cursor: grabbing;
+    }
+
+    .paper img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+
+    .paper p {
+      font-size: 1.1rem;
+      text-align: center;
+      margin: 5px 0;
+      overflow-wrap: break-word;
+    }
+
+    .red {
+      background: #ffebee;
+    }
+
+    /* Heart shape */
+    .heart {
+      width: 80px;
+      height: 80px;
+      padding: 0;
+      background: #ff1744;
+      border-radius: 0;
+      transform: rotate(-45deg);
+      box-shadow: none;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: #ff1744;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -40px;
+      left: 0;
+    }
+
+    .heart::after {
+      top: 0;
+      left: 40px;
+    }
+
+    @media (max-width: 480px) {
+      .paper {
+        width: min(240px, calc(100vw - 24px));
+        padding: 12px;
+      }
+
+      .paper p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="paper heart" style="left: 30px; top: 30px;"></div>
+
+  <div class="paper" style="left: 40px; top: 120px;">
+    <p>And I adore your</p>
+    <p>style and attitude 😍</p>
+    <img src="images/1.jpeg" alt="Your beautiful style">
+  </div>
+
+  <div class="paper" style="left: 80px; top: 190px;">
+    <p>You look amazing.. ❤️</p>
+    <img src="images/2.jpeg" alt="A beautiful photo">
+  </div>
+
+  <div class="paper" style="left: 120px; top: 260px;">
+    <p>How can someone be</p>
+    <p>so cute? ❤️</p>
+    <img src="images/3.jpg" alt="A cute photo">
+  </div>
+
+  <div class="paper red" style="left: 160px; top: 330px;">
+    <p>And so</p>
+    <p>beautiful 😍</p>
+  </div>
+
+  <div class="paper" style="left: 100px; top: 400px;">
+    <p>You are cute, so mature,</p>
+    <p>and amazing ❤️</p>
+  </div>
+
+  <div class="paper" style="left: 30px; top: 480px;">
+    <p>Drag the papers to move! 💌</p>
+  </div>
+
+  <script>
+    const papers = document.querySelectorAll(".paper");
+    let highestZ = 1;
+
+    papers.forEach((paper) => {
+      paper.addEventListener("pointerdown", (e) => {
+        e.preventDefault();
+
+        // Bring the selected paper to the front.
+        paper.style.zIndex = ++highestZ;
+
+        // Remember the exact starting position.
+        const startX = e.clientX;
+        const startY = e.clientY;
+        const startLeft = paper.offsetLeft;
+        const startTop = paper.offsetTop;
+
+        paper.setPointerCapture(e.pointerId);
+
+        function movePaper(event) {
+          if (event.pointerId !== e.pointerId) return;
+
+          const newLeft =
+            startLeft + event.clientX - startX;
+          const newTop =
+            startTop + event.clientY - startY;
+
+          paper.style.left = newLeft + "px";
+          paper.style.top = newTop + "px";
+        }
+
+        function stopPaper(event) {
+          if (event.pointerId !== e.pointerId) return;
+
+          paper.removeEventListener("pointermove", movePaper);
+          paper.removeEventListener("pointerup", stopPaper);
+          paper.removeEventListener("pointercancel", stopPaper);
+        }
+
+        paper.addEventListener("pointermove", movePaper);
+        paper.addEventListener("pointerup", stopPaper);
+        paper.addEventListener("pointercancel", stopPaper);
+      });
+    });
+  </script>
+
+</body>
+</html>
